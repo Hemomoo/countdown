@@ -10,9 +10,10 @@ let anniversaryObj ={}
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 400,
     height: 670,
     show: false,
+    resizable:false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col items-center">
     <router-link to="/" class="my-4 block">
       <SvgIcon class="rotate-180" name="arrow-right-circle"></SvgIcon>
     </router-link>
