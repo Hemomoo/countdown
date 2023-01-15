@@ -10,7 +10,8 @@ const api = {
   electronStorePath:()=>ipcRenderer.invoke('electron-store-path'),
   electronStoreEdite:(id,date)=> ipcRenderer.send('electron-store-edite',id,date), // 修改
   electronStoreGetAll:()=> ipcRenderer.invoke('electron-store-get-all'),
-  electronStoreAdd:(id,date)=>ipcRenderer.send('electron-store-add',id,date)
+  electronStoreAdd:(id,date)=>ipcRenderer.invoke('electron-store-add',id,date),
+  electronStoreDel:(id)=>ipcRenderer.invoke('electron-store-del',id)
 }
 
 

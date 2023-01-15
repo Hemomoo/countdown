@@ -1,9 +1,13 @@
 <template>
   <div class="flex flex-col items-center">
-    <router-link to="/" class="my-4 block">
-      <SvgIcon class="rotate-180" name="arrow-right-circle"></SvgIcon>
-    </router-link>
-    <Calendar ref="calendar"  backgroundText class-name="select-mode" language="cn" @onSelect="select" :lunar="lunar"
+    <div class="header  bg-primary w-full sticky  p-4 top-0">
+      <router-link to="/" class="block">
+        <SvgIcon class="rotate-180" name="arrow-right-circle"></SvgIcon>
+      </router-link>
+    </div>
+
+    <!-- 日历 -->
+    <Calendar ref="calendar" backgroundText class-name="select-mode" language="cn" @onSelect="select" :lunar="lunar"
       begin="1900-1-1" />
     <div class="flex justify-center mt-5">
       <div v-if="id" class="btn btn-success" @click="edite">修改</div>
@@ -20,13 +24,13 @@ import { nanoid } from 'nanoid'
 import SvgIcon from '../components/SvgIcon.vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import router from '../router'
 
 const calendar = ref('')
 const anniversary = ref('')
 const selectDate = ref('')
 const id = ref('')
 const route = useRoute()
+const router = useRouter()
 
 onMounted(() => {
   id.value = route.params.id
@@ -54,15 +58,17 @@ async function add() {
   const [year, month, day] = selectDate.value.split('-')
   const { lYear, IMonthCn, IDayCn } = lunar.solar2lunar(year, month, day)
   const id = nanoid(10)
-  await window.api.electronStoreAdd(id, {
+  const result = await window.api.electronStoreAdd(id, {
     id,
     date: selectDate.value,
     title: anniversary.value?.title,
     ldate: `${lYear} ${IMonthCn} ${IDayCn}`
   })
-
+  console.log('result: ', result);
+  if(result){
+    router.push('/')
+  }
   // 跳转到首页
-  router.push('/')
 }
 
 async function getVal(id) {

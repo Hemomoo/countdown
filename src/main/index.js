@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain,Notification } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -6,14 +6,14 @@ import Store from 'electron-store'
 import { diffDay } from '../utiles/index'
 
 const store = new Store()
-let anniversaryObj ={}
+let anniversaryObj = {}
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 400,
     height: 670,
     show: false,
-    resizable:false,
+    resizable: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
 
@@ -23,10 +23,13 @@ function createWindow() {
     }
   })
 
+  console.log('app.getPath', app.getPath('userData'))
+
   // 获取json地址
   ipcMain.handle('electron-store-get-all', async (event) => {
-    const config = await require(store.path)
+    const config = store.store
     anniversaryObj = config
+    console.log('anniversaryObj》〉》〉》〉》〉》〉》〉》〉》〉》〉》〉: ', anniversaryObj);
     return config
   })
 
@@ -38,23 +41,27 @@ function createWindow() {
   ipcMain.handle('electron-store-del', async (_event, id) => {
     if (store.has(id)) {
       await store.delete(id)
-      return '删除成功'
+      new Notification({
+        title: '删除成功'
+      }).show()
+      return 'success'
     } else {
-      return '没有查询到ID'
+      new Notification({
+        title: '删除失败'
+      }).show()
+      return 'fail'
     }
   })
 
   // 新增加
-  ipcMain.on('electron-store-add', async (_event, id, date) => {
+  ipcMain.handle('electron-store-add', async (_event, id, date) => {
     await store.set(id, date)
     // 新增成功要去读一次json,刷新下数据
     new Notification({
       title: `新增纪念日`,
-      body:`${date.title}`
-
+      body: `${date.title}`
     }).show()
-    const config = await require(store.path)
-    anniversaryObj = config
+    return true
   })
 
   ipcMain.on('electron-store-edite', async (_event, id, date) => {
@@ -89,31 +96,34 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+app
+  .whenReady()
+  .then(() => {
+    // Set app user model id for windows
+    electronApp.setAppUserModelId('com.electron')
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
+    // Default open or close DevTools by F12 in development
+    // and ignore CommandOrControl + R in production.
+    // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+    app.on('browser-window-created', (_, window) => {
+      optimizer.watchWindowShortcuts(window)
+    })
 
-  createWindow()
+    createWindow()
 
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    app.on('activate', function () {
+      // On macOS it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    })
   })
-}).then(async ()=>{
-  const config = await require(store.path)
-  anniversaryObj = config
-  const notifications =  Object.values(anniversaryObj).map(item=>{
-    return +diffDay(item.date)===0
+  .then(async () => {
+    const config = store.store
+    anniversaryObj = config
+    const notifications = Object.values(anniversaryObj).map((item) => {
+      return +diffDay(item.date) === 0
+    })
   })
-})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
