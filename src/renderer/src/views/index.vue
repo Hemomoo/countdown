@@ -133,9 +133,10 @@ async function del() {
 
 
 function to(id) {
+  console.log('id: ', id);
   router.push({
-    path: "edite",
-    params: {
+    path: 'edite',
+    query: {
       id
     }
   })

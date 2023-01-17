@@ -3,9 +3,10 @@ import App from './App.vue'
 import router from './router'
 import "tailwindcss/tailwind.css";
 import 'virtual:svg-icons-register'
+import Notifications from 'vue3-vt-notifications'
 
 const app = createApp(App);
-app.use(router).mount("#app");
+app.use(router).use(Notifications).mount("#app");
 
 app.directive('longpress', {
   beforeMount(el, binding) {

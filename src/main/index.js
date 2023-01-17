@@ -55,6 +55,7 @@ function createWindow() {
 
   // 新增加
   ipcMain.handle('electron-store-add', async (_event, id, date) => {
+    console.log('id: ', id);
     await store.set(id, date)
     // 新增成功要去读一次json,刷新下数据
     new Notification({
