@@ -53,7 +53,6 @@
 </template>
 
 <script setup>
-import { async } from "postcss-js";
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from 'vue-router'
 import { diffDay } from '../../../utiles/index'

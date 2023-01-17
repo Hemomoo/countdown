@@ -24,6 +24,8 @@
     "dayjs": "^1.11.7",
     "electron-store": "^8.1.0",
     "mpvue-calendar": "^3.0.1",
+    "notiwind": "^1.2.6",
+    "vant": "^4.0.8",
     "vue-router": "^4.1.6",
     "vue3-simple-icons": "^7.18.0"
   },

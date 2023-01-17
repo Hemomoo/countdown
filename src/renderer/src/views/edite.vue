@@ -16,6 +16,14 @@
     <!-- 日历 -->
     <Calendar ref="calendar" backgroundText class-name="select-mode" language="cn" @onSelect="select" :lunar="lunar"
       begin="1900-1-1" />
+
+    <Cell center title="重复">
+      <template #right-icon>
+        <Switch v-model="checked" size="20"  />
+      </template>
+    </Cell>
+
+
   </div>
 </template>
 
@@ -26,9 +34,16 @@ import lunar from 'mpvue-calendar/dist/lunar'
 import { nanoid } from 'nanoid'
 import SvgIcon from '../components/SvgIcon.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { showToast } from 'vant';
+import { Switch,Cell } from 'vant';
+import 'vant/es/Cell/style';
+import 'vant/es/Switch/style';
+
+
 
 
 const calendar = ref('')
+const checked =ref(false)
 const anniversary = ref('')
 const selectDate = ref('')
 const id = ref('')
@@ -39,7 +54,7 @@ const router = useRouter()
 
 onMounted(() => {
   id.value = route.query.id
-  console.log(' route.params.id: ',  route.query.id);
+  console.log(' route.params.id: ', route.query.id);
   commemorateType.value = id.value ? 'edit' : 'add'
   if (id.value) {
     getVal(id.value)
@@ -53,13 +68,13 @@ function select(date) {
 async function save() {
   const [year, month, day] = selectDate.value.split('-')
   const { lYear, IMonthCn, IDayCn } = lunar.solar2lunar(year, month, day)
-  if(!title.value){
-    alert("错误")
+  if (!title.value) {
+    showToast('请输入标题');
     return
   }
 
-  if(!selectDate.value){
-    alert("错误")
+  if (!selectDate.value) {
+    showToast('请选择时间');
     return
   }
   console.log('commemorateType: ', commemorateType);
@@ -83,9 +98,7 @@ async function save() {
   }
 }
 async function getVal(id) {
-  console.log('id: ', id);
   const obj = await window.api.electronStoreGet(id)
-  console.log('obj: ', obj);
   anniversary.value = obj
   const [year, month, day] = anniversary.value.date.split('-')
   calendar.value.render(year, month, day)
