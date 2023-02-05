@@ -1,13 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import '@vant/touch-emulator';
 import "tailwindcss/tailwind.css";
 import 'virtual:svg-icons-register'
-import { Toast } from 'vant';
+import { Toast,DatePicker,Picker } from 'vant';
+import 'vant/lib/index.css';
+
 
 
 const app = createApp(App);
-app.use(router).use(Toast).mount("#app");
+app.use(router).use(Toast).use(Picker).mount("#app");
 
 app.directive('longpress', {
   beforeMount(el, binding) {

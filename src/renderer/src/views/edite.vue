@@ -5,7 +5,7 @@
         <SvgIcon class="rotate-180" name="arrow-right-circle"></SvgIcon>
       </router-link>
       <!-- 保存 -->
-      <SvgIcon class="rotate-180" name="save" @click="save"></SvgIcon>
+      <SvgIcon class="rotate-180 cursor-pointer" name="save" @click="save"></SvgIcon>
     </div>
 
     <!-- 标题 -->
@@ -54,7 +54,6 @@ const router = useRouter()
 
 onMounted(() => {
   id.value = route.query.id
-  console.log(' route.params.id: ', route.query.id);
   commemorateType.value = id.value ? 'edit' : 'add'
   if (id.value) {
     getVal(id.value)

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header flex justify-between bg-primary sticky p-4 top-0" @click="obj.menuShow = false">
-      <router-link to="/edite">
+      <router-link to="/picker">
         <SvgIcon name="plus-circle" color="#fff"></SvgIcon>
       </router-link>
       <div class="relative" @click.stop="obj.menuShow = true">
@@ -34,10 +34,7 @@
         <div class="divider"></div>
       </div>
     </div>
-
-
-
-    <!-- 弹窗 -->
+     <!-- 弹窗 -->
     <div class="modal" :class="{ 'modal-open': obj.modalShow }">
       <div class="modal-box relative">
         <label @click="obj.modalShow = false" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
@@ -104,7 +101,6 @@ onMounted(async () => {
 
 async function getAll(){
   const anniversary = await window.api.electronStoreGetAll();
-  console.log('anniversary: ', anniversary);
   obj.anniversary = Object.values(anniversary).map((item) => {
     return {
       ...item,
@@ -132,7 +128,6 @@ async function del() {
 
 
 function to(id) {
-  console.log('id: ', id);
   router.push({
     path: 'edite',
     query: {
