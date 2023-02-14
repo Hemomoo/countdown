@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script setup>
+<script  setup>
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from 'vue-router'
 import { diffDay } from '../../../utiles/index'

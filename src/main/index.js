@@ -28,8 +28,8 @@ function createWindow() {
   // 获取json地址
   ipcMain.handle('electron-store-get-all', async (event) => {
     const config = store.store
+    console.log('config: ', config);
     anniversaryObj = config
-    console.log('anniversaryObj》〉》〉》〉》〉》〉》〉》〉》〉》〉》〉: ', anniversaryObj);
     return config
   })
 
@@ -54,8 +54,7 @@ function createWindow() {
   })
 
   // 新增加
-  ipcMain.handle('electron-store-add', async (_event, id, date) => {
-    console.log('id: ', id);
+  ipcMain.handle('electron-store-add', async (_event, id, date,countDownTit) => {
     await store.set(id, date)
     // 新增成功要去读一次json,刷新下数据
     new Notification({
@@ -66,6 +65,7 @@ function createWindow() {
   })
 
   ipcMain.on('electron-store-edite', async (_event, id, date) => {
+    // 判断是否有id
     const isHas = store.has(id)
     if (isHas) {
       store.set(id, date)

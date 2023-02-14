@@ -76,7 +76,6 @@ async function save() {
     showToast('请选择时间');
     return
   }
-  console.log('commemorateType: ', commemorateType);
   if (commemorateType.value === 'add') {
     const id = nanoid(10)
     await window.api.electronStoreAdd(id, {

@@ -9,74 +9,106 @@
     </div>
 
 
-    <!-- 农历和阴历切换 -->
 
-    <div class="tabs tabs-boxed bg-white">
-      <a :class="['tab',{'tab-active':isLunar}]" @click="switchType('lunar')">农历</a>
-      <a :class="['tab',{'tab-active':!isLunar}]" @click="switchType('solar')">阳历</a>
+
+
+    <!-- 农历和阴历切换 -->
+    <div>
+      <h3>农历/阳历</h3>
+      <div class="btn-group btn-group-horizontal sm:btn-group-horizontal w-full">
+        <button :class="['btn', { 'btn-active': isLunar }]" @click="switchType('lunar')">农历</button>
+        <button :class="['btn', { 'btn-active': !isLunar }]" @click="switchType('solar')">阳历</button>
+      </div>
     </div>
-    <Picker
-    ref="picker"
-    v-model:isShowPicker="isShowDate"
-    v-model:anchor="currentDate"
-    type="date"
-    :key="isLunar"
-    :isLunar="isLunar"
-    :options="{ titleText: '' }"
-    @confirm="confirmDate"
-  />
+
+
+
+    <!-- 输入框 -->
+    <Field  v-model="countDownValue" placeholder="请输入倒数日名称" ></Field>
+
+    <!--  -->
+    <Picker ref="picker" v-model:isShowPicker="isShowDate" v-model:anchor="currentDate" type="date" :key="isLunar"
+      :isLunar="isLunar" @confirm="confirmDate" />
 
   </div>
 </template>
 
 <script setup>
-import  Picker  from '../components/Picker.vue';
+import Picker from '../components/Picker.vue';
 import SvgIcon from '../components/SvgIcon.vue'
-import { ref,onMounted,nextTick,reactive } from 'vue';
+import { ref, onMounted, nextTick, reactive } from 'vue';
 import dayjs from 'dayjs'
-import { dayToArray,solarToLunar,lunarToSolar } from '../../../utiles/index'
+import { dayToArray, solarToLunar, lunarToSolar } from '../../../utiles/index'
+import { Field,showToast  } from 'vant';
 const isShowDate = ref(false);
 const currentDate = ref(dayToArray(dayjs()));
 const selectDate = ref([])
+const countDownValue = ref("")
 const picker = ref('')
+const calendarType = ref('') // 日历类型 农历 阳历
+const commemorateType = ref('add') // 修改还是新增
 
 // 是不是农历
 const isLunar = ref(false)
- onMounted(() => {
-    nextTick(()=>{
-      isShowDate.value = true
-    })
+onMounted(() => {
+  nextTick(() => {
+    isShowDate.value = true
+  })
 })
 
-function confirmDate(date){
-  console.log('date:>>>>> ', date);
+function confirmDate(date) {
   selectDate.value = date
+}
+
+async function save() {
+  if(countDownValue.value.trim()===''){
+    showToast('请输入倒数日名称');
+    return
+  }
+
+  if (commemorateType.value === 'add') {
+    const id = nanoid(10) // 生成id保证唯一
+    await window.api.electronStoreAdd(id, {
+      id,// id
+      date: selectDate.value, // 选择的时间
+      title: countDownValue.value, // 倒计时时间
+      calendarType: calendarType.value, // 判断是农历还是阳历
+      ldate: `${lYear} ${IMonthCn} ${IDayCn}`
+    })
+    router.push('/')
+  } else {
+    await window.api.electronStoreEdite(id.value, {
+      id: id.value,
+      date: selectDate.value,
+      title: title.value,
+      ldate: `${lYear} ${IMonthCn} ${IDayCn}`
+    })
+    router.push('/')
+  }
+
 
 }
 
-function save(){
-
-}
-
-function switchType(type){
+// 切换农历与阳历
+function switchType(type) {
+  // 切换日历的时候
   picker.value.confirm()
-  if(type==='lunar'){
-     const [ y,m,d ] = selectDate.value
-     console.log('selectDate.value: ', selectDate.value);
-     isLunar.value = true
-     isShowDate.value = false
-     currentDate.value = solarToLunar(new Date(y,m-1,d))
-     nextTick(()=>{
+  if (type === 'lunar') {
+    const [y, m, d] = selectDate.value
+    isLunar.value = true
+    isShowDate.value = false
+    currentDate.value = solarToLunar(new Date(y, m - 1, d))
+    nextTick(() => {
       isShowDate.value = true
-     })
-  }else{
-     isLunar.value = false
-     currentDate.value = lunarToSolar(selectDate.value)
-     console.log('currentDate.value: ', currentDate.value);
-     isShowDate.value = false
-     nextTick(()=>{
-       isShowDate.value = true
-     })
+    })
+  } else {
+    isLunar.value = false
+    currentDate.value = lunarToSolar(selectDate.value)
+    console.log('currentDate.value: ', currentDate.value);
+    isShowDate.value = false
+    nextTick(() => {
+      isShowDate.value = true
+    })
   }
 }
 
