@@ -7,11 +7,6 @@
       <!-- 保存 -->
       <SvgIcon class="rotate-180 cursor-pointer" name="save" @click="save"></SvgIcon>
     </div>
-
-
-
-
-
     <!-- 农历和阴历切换 -->
     <div>
       <h3>农历/阳历</h3>

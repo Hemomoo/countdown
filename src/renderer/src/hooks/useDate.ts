@@ -1,7 +1,11 @@
 import { ref, computed,watch } from "vue";
 import { isHaveValue } from '../../../utiles/common';
-import {Lunar,LunarMonth} from 'lunar-typescript';
 import type { PickerProps } from "../types";
+import { lunarToSolar } from "../../../utiles/index"
+
+// import {Lunar,LunarMonth} from 'lunar-typescript';
+const {Solar, Lunar, LunarMonth} = require('lunar-javascript')
+
 
 export default (isDate: boolean,isLunar:boolean) => {
   if (!isDate) return {};
@@ -13,12 +17,12 @@ export default (isDate: boolean,isLunar:boolean) => {
   const defaultDay = date.getDate();
   const selectYear = ref(defaultYear);
   const selectMonth = ref(defaultMonth);
-  const lunarDays = [
+  const lunarDayss = [
     '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
     '十-','十二','十三','十四','十五','十六','十七','十八','十九','二十',
     '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'
 ]
-  const lunarMonths = ['正','二','三','四','五','六','七','八','九','十','冬','腊']
+  const lunarMonthss = ['正','二','三','四','五','六','七','八','九','十','冬','腊']
 
   const zh =
   {"0": "〇",
@@ -47,8 +51,10 @@ export default (isDate: boolean,isLunar:boolean) => {
           : isLeapYear(selectYear.value) ? 29 : 28;
       return generateList(1,days,'day')
     }else{
-      const days = LunarMonth.fromYm(selectYear.value, selectMonth.value)?.getDayCount()  as number
-      return generateList(1,days,'day')
+      console.log('LunarMonth.fromYm(selectYear.value, selectMonth.value): ', LunarMonth.fromYm(2023, 2).getDayCount());
+
+      // const days = LunarMonth.fromYm(selectYear.value, selectMonth.value).getDayCount()
+      return generateList(1,30,'day')
     }
   });
 
@@ -71,14 +77,14 @@ export default (isDate: boolean,isLunar:boolean) => {
     // 农历转换
     if(isLunar){
       if(type === 'day'){
-        if(result.length>lunarDays.length){
-          result = lunarDays
+        if(result.length>lunarDayss.length){
+          result = lunarDayss
         }else{
-          result = lunarDays.slice(0,result.length-1)
+          result = lunarDayss.slice(0,result.length-1)
         }
       }
       if(type==='month'){
-        result = result.map((item,index)=>lunarMonths[index])
+        result = result.map((item,index)=>lunarMonthss[index])
         console.log('result: ', result);
       }
 

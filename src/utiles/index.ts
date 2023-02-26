@@ -1,9 +1,15 @@
-import { current } from 'daisyui/src/colors';
+// import { current } from 'daisyui/src/colors';
 import dayjs from 'dayjs'
 import toArray from 'dayjs/plugin/toArray'
-import {Lunar,LunarMonth, Solar} from 'lunar-typescript';
 
+const {Solar, Lunar, HolidayUtil} = require('lunar-javascript')
 dayjs.extend(toArray)
+
+// import {Lunar,LunarMonth, Solar} from 'lunar-typescript';
+
+// const {Solar,Lunar} = require('lunar.js')
+
+
 
 
 const lunarDays = [
@@ -57,16 +63,17 @@ export function lunarToSolar(date:Array<any>){
      const ny = + date[0].split("").reduce((total,current)=>{
         return `${total}` + Array.from(zh).findIndex( (item)=>item === current)
       },'')
-      console.log('ny: ', ny);
-
-      const nm =lunarMonths.findIndex((item)=>item === date[1])+1
-      console.log('nm: ', nm);
-      const nd =lunarDays.findIndex((item)=>item === date[2])+1
-      console.log('nd: ', nd);
-      console.log('Lunar.fromYmd(ny,nm,nd): ',dayjs(Lunar.fromYmd(ny,nm,nd).getSolar().toString()).format("YYYY-M-D"));
-
+      let arrLength = date.length
+      if(arrLength===1){
+        return ny
+      }else if(arrLength===2){
+        const nm =lunarMonths.findIndex((item)=>item === date[1])+1
+        return  dayjs(Lunar.fromYmd(ny,nm).getSolar().toString()).format("YYYY-M").split("-").map(item=>Number(item))
+      }else{
+        const nm =lunarMonths.findIndex((item)=>item === date[1])+1
+        const nd =lunarDays.findIndex((item)=>item === date[2])+1
+        return  dayjs(Lunar.fromYmd(ny,nm,nd).getSolar().toString()).format("YYYY-M-D").split("-").map(item=>Number(item))
+      }
       // 转阳历
-      return  dayjs(Lunar.fromYmd(ny,nm,nd).getSolar().toString()).format("YYYY-M-D").split("-").map(item=>Number(item))
-
 }
 
