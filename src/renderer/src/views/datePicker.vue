@@ -45,6 +45,7 @@ const currentDate = ref(dayToArray(dayjs()));
 const selectDate = ref([])
 const countDownValue = ref("")
 const picker = ref('')
+const selType = ref("")
 const calendarType = ref('') // 日历类型 农历 阳历
 const commemorateType = ref('add') // 修改还是新增
 
@@ -91,7 +92,13 @@ async function save() {
 
 // 切换农历与阳历
 function switchType(type) {
+
   // 切换日历的时候
+  if(selType.value!==type){
+    selType.value = type
+  }else{
+    return
+  }
   picker.value.confirm()
   if (type === 'lunar') {
     const [y, m, d] = selectDate.value
