@@ -18,7 +18,7 @@ export default (props: PickerProps, emit: PickerEmit) => {
   const isCascadeData = computed(() => isArray(props.data[0]));
   const isDate = computed(() => props.type === 'date');
   const isTime = computed(() => props.type === 'time');
-  const { selectYear, selectMonth, dateList, updateDateSelect, getDateAnchors } = useDate(isDate.value,props.isLunar);
+  const { selectYear, selectMonth, selectDay,dateList, updateDateSelect, getDateAnchors } = useDate(isDate.value,props.isLunar);
   const { timeList, updateDefaultTime, getTimeAnchors } = useTime(isTime.value);
   const pickerAnchors = computed(() => {
     if (isDate.value) return getDateAnchors!(props.anchor);
@@ -77,12 +77,13 @@ export default (props: PickerProps, emit: PickerEmit) => {
   }
 
   function handleScrollEnd(index: number) {
-    if (!isDate.value || index === 2) return;
+    // if (!isDate.value || index === 2) return;
     const position = wheels.value[index].getSelectedIndex();
     const value = dateList!.value[index][position];
     if (index === 0) selectYear!.value = value;
     if (index === 1) selectMonth!.value = value;
-    // confirm()
+    if (index === 2) selectMonth!.value = value;
+    confirm()
     // emit('pckerSelectconfirmItem',index,value)
     setPickerData(true);
   }
@@ -110,7 +111,6 @@ export default (props: PickerProps, emit: PickerEmit) => {
     const isInTransition = wheels.value.some(wheel => wheel.isInTransition);
     isInTransition && stopWheels();
     const { item, anchor } = getSelectedItem();
-    console.log('confirm: ', item);
     emit('confirm', item);
     emit('update:anchor', anchor);
     // closePicker();

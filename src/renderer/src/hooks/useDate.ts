@@ -17,6 +17,7 @@ export default (isDate: boolean,isLunar:boolean) => {
   const defaultDay = date.getDate();
   const selectYear = ref(defaultYear);
   const selectMonth = ref(defaultMonth);
+  const selectDay = ref(defaultDay);
   const lunarDayss = [
     '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
     '十-','十二','十三','十四','十五','十六','十七','十八','十九','二十',
@@ -106,14 +107,16 @@ export default (isDate: boolean,isLunar:boolean) => {
   }
 
   function updateDateSelect(pickerAnchors: Array<number>) {
-    const [year, month] = pickerAnchors;
+    const [year, month,day] = pickerAnchors;
     selectYear.value = dateList.value[0][year];
     selectMonth.value = dateList.value[1][month];
+    selectMonth.value = dateList.value[2][day];
   }
 
   return {
     selectYear,
     selectMonth,
+    selectDay,
     dateList,
     updateDateSelect,
     getDateAnchors,

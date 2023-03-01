@@ -9,7 +9,6 @@
     </div>
     <!-- 农历和阴历切换 -->
     <div>
-      <h3>农历/阳历</h3>
       <div class="btn-group btn-group-horizontal sm:btn-group-horizontal w-full">
         <button :class="['btn', { 'btn-active': isLunar }]" @click="switchType('lunar')">农历</button>
         <button :class="['btn', { 'btn-active': !isLunar }]" @click="switchType('solar')">阳历</button>
@@ -19,7 +18,7 @@
 
 
     <!-- 输入框 -->
-    <Field  v-model="countDownValue" placeholder="请输入倒数日名称" ></Field>
+    <Field v-model="countDownValue" placeholder="请输入倒数日名称"></Field>
 
     <!--  -->
     <Picker ref="picker" v-model:isShowPicker="isShowDate" v-model:anchor="currentDate" type="date" :key="isLunar"
@@ -31,18 +30,21 @@
 <script setup>
 import Picker from '../components/Picker.vue';
 import SvgIcon from '../components/SvgIcon.vue'
-import { ref, onMounted, nextTick, reactive } from 'vue';
+import { ref, onMounted, nextTick, reactive,toRaw } from 'vue';
 import dayjs from 'dayjs'
+import { nanoid } from 'nanoid'
 import { dayToArray, solarToLunar, lunarToSolar } from '../../../utiles/index'
-import { Field,showToast  } from 'vant';
+import { Field, showToast } from 'vant';
+import { useRouter } from 'vue-router';
 const isShowDate = ref(false);
 const currentDate = ref(dayToArray(dayjs()));
 const selectDate = ref([])
 const countDownValue = ref("")
 const picker = ref('')
-const selType = ref("")
-const calendarType = ref('') // 日历类型 农历 阳历
+const calendarType = ref('solar') // 日历类型 农历 阳历
 const commemorateType = ref('add') // 修改还是新增
+
+const router = useRouter()
 
 // 是不是农历
 const isLunar = ref(false)
@@ -53,45 +55,47 @@ onMounted(() => {
 })
 
 function confirmDate(date) {
+  console.log('date: ', date);
   selectDate.value = date
 }
 
 async function save() {
-  if(countDownValue.value.trim()===''){
+  if (countDownValue.value.trim() === '') {
     showToast('请输入倒数日名称');
     return
   }
-
+  const [y, m, d] = selectDate.value
+  const date = calendarType.value === 'lunar' ? lunarToSolar(selectDate.value) : selectDate.value;// 选择的时间
+  const ldate = calendarType.value === 'solar' ? solarToLunar(new Date(y, m - 1, d)) : selectDate.value; // 阴历时间
   if (commemorateType.value === 'add') {
     const id = nanoid(10) // 生成id保证唯一
     await window.api.electronStoreAdd(id, {
       id,// id
-      date: selectDate.value, // 选择的时间
+      date: toRaw(date).join("-"), // 选择的时间
       title: countDownValue.value, // 倒计时时间
       calendarType: calendarType.value, // 判断是农历还是阳历
-      ldate: `${lYear} ${IMonthCn} ${IDayCn}`
+      ldate: toRaw(ldate).join("\xa0"), // 阴历时间 增加了一个空格 保证后面好切割
     })
-    router.push('/')
   } else {
+    // 修改
     await window.api.electronStoreEdite(id.value, {
       id: id.value,
-      date: selectDate.value,
-      title: title.value,
-      ldate: `${lYear} ${IMonthCn} ${IDayCn}`
+      date: toRaw(date).join("-"), // 选择的时间
+      title: countDownValue.value, // 倒计时时间
+      calendarType: calendarType.value, // 判断是农历还是阳历
+      ldate: toRaw(ldate).join("\xa0"), // 阴历时间
     })
-    router.push('/')
   }
-
-
+  router.push('/')
 }
 
 // 切换农历与阳历
 function switchType(type) {
 
   // 切换日历的时候
-  if(selType.value!==type){
-    selType.value = type
-  }else{
+  if (calendarType.value !== type) {
+    calendarType.value = type
+  } else {
     return
   }
   picker.value.confirm()
@@ -117,6 +121,4 @@ function switchType(type) {
 
 </script>
 
-<style  lang="scss"  scoped>
-
-</style>
+<style  lang="scss"  scoped></style>

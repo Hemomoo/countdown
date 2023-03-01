@@ -24,8 +24,8 @@
           </div>
           <div class="flex-1">
             <div class="title">{{ item.title }}</div>
-            <div class="date">农历时间：{{ item.date }}</div>
-            <div class="date">公历时间:{{ item.ldate }}</div>
+            <div class="date" v-if="item.calendarType==='lunar'">农历时间：{{ item.ldate }}</div>
+            <div class="date" v-if="item.calendarType==='solar'">公历时间:{{ item.date }}</div>
             <div class="date">剩余时间:{{ item.remainingDays }}天</div>
           </div>
           <SvgIcon name="arrow-right-circle"></SvgIcon>
@@ -104,7 +104,7 @@ async function getAll(){
   obj.anniversary = Object.values(anniversary).map((item) => {
     return {
       ...item,
-      remainingDays: diffDay(item.date),
+      remainingDays: diffDay(item.calendarType,item.calendarType==='lunar'?item.ldate:item.date),
     }
   });
 }

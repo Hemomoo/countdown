@@ -1,6 +1,7 @@
 // import { current } from 'daisyui/src/colors';
 import dayjs from 'dayjs'
 import toArray from 'dayjs/plugin/toArray'
+var _ = require('lodash');
 
 const {Solar, Lunar, HolidayUtil} = require('lunar-javascript')
 dayjs.extend(toArray)
@@ -35,8 +36,21 @@ length:10
 
 
 // 两个日期相距天数
-export function diffDay(date) {
-  return +dayjs(dayjs().format('MM-DD')).diff(dayjs(date).format('MM-DD'), 'day')
+export function diffDay(calendarType,date) {
+  console.log('date: ', date);
+  // 阴历
+  if(calendarType==='lunar'){
+    // 获取当前阴历年,
+    const lunarYear =new Date().toLocaleString('zh-Hans-u-ca-chinese').slice(0,4)
+    // console.log('currentData: ', currentData.slice(0,4));
+    let dateCopy = _.cloneDeep(date)
+    let dateArra = dateCopy.split("\xa0")
+    dateArra.splice(0,1, numberToChinese(lunarYear) )
+    const [year,month,day] =  lunarToSolar(dateArra) as Array<number>
+    return +dayjs(dayjs().format('YYYY-MM-DD')).diff(dayjs([year,month-1,day].join()).format('YYYY-MM-DD'), 'day')
+  }else{
+    return +dayjs(dayjs().format('MM-DD')).diff(dayjs(date).format('MM-DD'), 'day')
+  }
 }
 
 // 日期转位数组
@@ -45,9 +59,15 @@ export function dayToArray(date:any){
   return  [y,m+1,d]
 }
 
+// 数字转中文
+export function numberToChinese(val:string|number){
+  return  val.toString().split("").reduce((total,current)=>{
+      return `${total}` + zh[current]
+    },'')
+}
+
 // 阳历转阴历
 export function  solarToLunar(date:any){
-  console.log('date: ', date);
    const d = Lunar.fromDate(date);
    const cd = d.getDayInChinese()
    const cm = d.getMonthInChinese()
@@ -58,8 +78,8 @@ export function  solarToLunar(date:any){
 
 
 // 阴历中文日期转数字转阳历
-export function lunarToSolar(date:Array<any>){
-  console.log('date: ', date);
+export function lunarToSolar(date:Array<string>){
+  // console.log('date: ', date);
      const ny = + date[0].split("").reduce((total,current)=>{
         return `${total}` + Array.from(zh).findIndex( (item)=>item === current)
       },'')
@@ -74,6 +94,5 @@ export function lunarToSolar(date:Array<any>){
         const nd =lunarDays.findIndex((item)=>item === date[2])+1
         return  dayjs(Lunar.fromYmd(ny,nm,nd).getSolar().toString()).format("YYYY-M-D").split("-").map(item=>Number(item))
       }
-      // 转阳历
 }
 
