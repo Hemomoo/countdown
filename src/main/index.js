@@ -1,6 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+const schedule = require('node-schedule')
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import { diffDay } from '../utiles/index'
@@ -28,7 +29,7 @@ function createWindow() {
   // 获取json地址
   ipcMain.handle('electron-store-get-all', async (event) => {
     const config = store.store
-    console.log('config: ', config);
+    console.log('config: ', config)
     anniversaryObj = config
     return config
   })
@@ -54,7 +55,7 @@ function createWindow() {
   })
 
   // 新增加
-  ipcMain.handle('electron-store-add', async (_event, id, date,countDownTit) => {
+  ipcMain.handle('electron-store-add', async (_event, id, date, countDownTit) => {
     await store.set(id, date)
     // 新增成功要去读一次json,刷新下数据
     new Notification({
@@ -74,6 +75,15 @@ function createWindow() {
       return '没有找个这个id'
     }
   })
+
+  // const job = schedule.scheduleJob('30 * * * * *', function () {
+  //   [1, 2, 3].forEach((item) => {
+  //     console.log('Today is recognized by Rebecca Black!')
+  //     new Notification({
+  //       title: `测试`
+  //     }).show()
+  //   })
+  // })
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

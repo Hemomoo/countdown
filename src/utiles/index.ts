@@ -37,17 +37,16 @@ length:10
 
 // 两个日期相距天数
 export function diffDay(calendarType,date) {
-  console.log('date: ', date);
   // 阴历
   if(calendarType==='lunar'){
     // 获取当前阴历年,
     const lunarYear =new Date().toLocaleString('zh-Hans-u-ca-chinese').slice(0,4)
-    // console.log('currentData: ', currentData.slice(0,4));
     let dateCopy = _.cloneDeep(date)
     let dateArra = dateCopy.split("\xa0")
     dateArra.splice(0,1, numberToChinese(lunarYear) )
     const [year,month,day] =  lunarToSolar(dateArra) as Array<number>
-    return +dayjs(dayjs().format('YYYY-MM-DD')).diff(dayjs([year,month-1,day].join()).format('YYYY-MM-DD'), 'day')
+    // 计算倒计时时间
+    return +dayjs( dayjs([year,month-1,day].join()).format('YYYY-MM-DD')).diff(dayjs().format('YYYY-MM-DD'),'day')
   }else{
     return +dayjs(dayjs().format('MM-DD')).diff(dayjs(date).format('MM-DD'), 'day')
   }
