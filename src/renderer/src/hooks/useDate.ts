@@ -45,12 +45,15 @@ export default (isDate: boolean,isLunar:boolean) => {
     if(!isLunar){
       const thirty = [4, 6, 9, 11];
       const thirtyOne = [1, 3, 5, 7, 8, 10, 12];
+      console.log('selectMonth.value: ', selectMonth.value);
       const days = thirty.includes(selectMonth.value)
         ? 30
         : thirtyOne.includes(selectMonth.value)
           ? 31
           : isLeapYear(selectYear.value) ? 29 : 28;
+      console.log('days: ', days);
       return generateList(1,days,'day')
+
     }else{
       console.log('LunarMonth.fromYm(selectYear.value, selectMonth.value): ', LunarMonth.fromYm(2023, 2).getDayCount());
 

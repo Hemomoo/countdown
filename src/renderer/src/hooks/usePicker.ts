@@ -82,7 +82,7 @@ export default (props: PickerProps, emit: PickerEmit) => {
     const value = dateList!.value[index][position];
     if (index === 0) selectYear!.value = value;
     if (index === 1) selectMonth!.value = value;
-    if (index === 2) selectMonth!.value = value;
+    if (index === 2) selectDay!.value = value as number;
     confirm()
     // emit('pckerSelectconfirmItem',index,value)
     setPickerData(true);
