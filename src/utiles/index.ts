@@ -1,7 +1,8 @@
 // import { current } from 'daisyui/src/colors';
 import dayjs from 'dayjs'
 import toArray from 'dayjs/plugin/toArray'
-var _ = require('lodash');
+import _ from 'lodash'
+// var _ = require('lodash');
 
 const {Solar, Lunar, HolidayUtil} = require('lunar-javascript')
 dayjs.extend(toArray)
